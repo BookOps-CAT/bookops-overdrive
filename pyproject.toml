@@ -1,0 +1,35 @@
+[project]
+name = "bookops-overdrive"
+version = "0.0.1"
+description = "Overdrive Developer API wrapper"
+authors = [
+    {name = "Charlotte Kostelic",email = "charlottekostelic@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "requests (>=2.32.4,<3.0.0)",
+    "types-requests (>=2.32.4.20250611,<3.0.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+	"webtest: mark a test hitting a live API endpoint",
+]
+addopts = '-m "not livetest" --cov=bookops_overdrive/'
+
+[tool.coverage.run]
+relative_files = true
+source = ["."]
+omit = ["tests/*"]
