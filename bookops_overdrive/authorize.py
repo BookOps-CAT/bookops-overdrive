@@ -63,10 +63,9 @@ class OverdriveAccessToken:
     def _parse_server_response(self, response: requests.Response) -> None:
         """Parse response from authorization server."""
         self.server_response = response
-        if response.ok:
-            json_resp = response.json()
-            self.token_str = json_resp["access_token"]
-            self.expires_at = self._calculate_expiration_time(json_resp["expires_in"])
+        json_resp = response.json()
+        self.token_str = json_resp["access_token"]
+        self.expires_at = self._calculate_expiration_time(json_resp["expires_in"])
 
     def _post_token_request(self) -> requests.Response:
         """Sends a POST request for an access token"""
