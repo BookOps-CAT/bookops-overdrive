@@ -25,7 +25,8 @@ pytest-cov = "^6.2.1"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
-	"webtest: mark a test hitting a live API endpoint",
+	"livetest: mark a test hitting a live API endpoint",
+    "http_code: use to pass returned http code to 'mock_session_response' fixture that mocks 'requests.Session.send' method",
 ]
 addopts = '-m "not livetest" --cov=bookops_overdrive/'
 
