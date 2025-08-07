@@ -48,10 +48,9 @@ class TestOverdriveSession:
         assert response.status_code == 200
         assert response.reason == "OK"
 
-    def test_get_bulk_metadata(self, stub_session):
-        response = stub_session.get_bulk_metadata(
-            collectionToken="foo", reserveIds="123,456"
-        )
+    @pytest.mark.parametrize("ids", ["123,456", ["123", "456"], "123"])
+    def test_get_bulk_metadata(self, stub_session, ids):
+        response = stub_session.get_bulk_metadata(collectionToken="foo", reserveIds=ids)
         assert response.status_code == 200
         assert response.reason == "OK"
 

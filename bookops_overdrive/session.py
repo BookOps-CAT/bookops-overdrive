@@ -55,6 +55,12 @@ class OverdriveSession(requests.Session):
     def _url_library_account(self, library_id: int) -> str:
         return f"{self.BASE_URL}/libraries/{library_id}"
 
+    def _verify_reserve_ids(self, reserveIds: str | list[str]) -> str:
+        if isinstance(reserveIds, list):
+            return ",".join([str(i) for i in reserveIds])
+        else:
+            return ",".join([str(i.strip()) for i in reserveIds.split(",")])
+
     def get_library_account_info(self, library_id: int) -> requests.Response:
         url = self._url_library_account(library_id)
         header = {"Accept": "application/json"}
@@ -76,7 +82,7 @@ class OverdriveSession(requests.Session):
     ) -> requests.Response:
         url = self._url_collections_bulk_metadata(collectionToken)
         header = {"Accept": "application/json"}
-        payload = {"reserveIds": reserveIds}
+        payload = {"reserveIds": self._verify_reserve_ids(reserveIds=reserveIds)}
         req = requests.Request("GET", url=url, headers=header, params=payload)
         prepared_request = self.prepare_request(req)
         query = Query(self, prepared_request=prepared_request)
