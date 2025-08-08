@@ -78,7 +78,16 @@ class OverdriveAccessToken:
         self.expires_at = self._calculate_expiration_time(json_resp["expires_in"])
 
     def _post_token_request(self) -> requests.Response:
-        """Sends a POST request for an access token."""
+        """
+        Sends a POST request for an access token.
+
+        Returns:
+            response from server as a `requests.Response` object.
+
+        Raises:
+            BookopsOverdriveError: If access token POST request encounters any errors.
+
+        """
         auth = (self.key, self.secret)
         headers = {"User-Agent": self.agent, "Accept": "application/json"}
         data = {"grant_type": "client_credentials"}
@@ -100,7 +109,7 @@ class OverdriveAccessToken:
         else:
             return response
 
-    def _request_token(self):
+    def _request_token(self) -> None:
         """Requests an access token and parses response from server."""
         response = self._post_token_request()
         self._parse_server_response(response)
@@ -114,7 +123,7 @@ class OverdriveAccessToken:
         else:
             return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"access_token: '{self.token_str}', "
             f"expires_at: '{self.expires_at:%Y-%m-%d %H:%M:%SZ}'"
