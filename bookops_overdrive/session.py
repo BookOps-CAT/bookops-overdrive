@@ -11,19 +11,8 @@ from .query import Query
 
 class OverdriveSession(requests.Session):
     """
-    The `OverdriveSession` class supports interactions with the Overdrive Discovery API.
-    Inherits all `requests.Session` methods.
-
-    Args:
-        authorization:
-            an `OverdriveAccessToken` object
-        agent:
-            `User-agent` parameter to be passed in request header.
-            Default is 'bookops-overdrive/{version}'
-        timeout:
-            How many seconds to wait for the server to respond. Accepts a single value
-            to be applied to both connect and read timeouts or two separate values.
-            Default is 5 seconds for connect and read timeouts.
+    The `OverdriveSession` class supports interactions with the Overdrive Discovery
+    APIs. Inherits all `requests.Session` methods.
 
     """
 
@@ -35,6 +24,21 @@ class OverdriveSession(requests.Session):
         agent: str = f"{__title__}/{__version__}",
         timeout: int | float | tuple[int | float, int | float] | None = (5, 5),
     ) -> None:
+        """Initializes `OverdriveSession` class instance.
+
+        Args:
+            authorization:
+                an `OverdriveAccessToken` object.
+            agent:
+                `User-agent` parameter to be passed in request header.
+                Default is 'bookops-overdrive/{version}'.
+            timeout:
+                How many seconds to wait for the server to respond. Accepts a single value
+                to be applied to both connect and read timeouts or two separate values.
+                Default is 5 seconds for connect and read timeouts.
+
+        """
+
         super().__init__()
         self.authorization = authorization
         self.timeout = timeout

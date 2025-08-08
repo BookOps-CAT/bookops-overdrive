@@ -22,18 +22,6 @@ class OverdriveAccessToken:
     from Overdrive (more information on requesting credentials is available here:
     https://developer.overdrive.com/getting-started/application-process).
 
-    Args:
-        key:
-            API clientKey as a string
-        secret:
-            API clientSecret as a string
-        agent:
-            `User-agent` parameter to be passed in request header.
-            Default is 'bookops-overdrive/{version}'
-        timeout:
-            How many seconds to wait for the server to respond. Accepts a single value
-            to be applied to both connect and read timeouts or two separate values.
-            Default is 5 seconds for connect and read timeouts.
     """
 
     def __init__(
@@ -43,6 +31,23 @@ class OverdriveAccessToken:
         agent: str = f"{__title__}/{__version__}",
         timeout: int | float | tuple[int | float, int | float] | None = (5, 5),
     ) -> None:
+        """Initializes `OverdriveAccessToken` class instance.
+
+        Args:
+            key:
+                API clientKey as a string.
+            secret:
+                API clientSecret as a string.
+            agent:
+                `User-agent` parameter to be passed in request header.
+                Default is 'bookops-overdrive/{version}'.
+            timeout:
+                How many seconds to wait for the server to respond. Accepts a single value
+                to be applied to both connect and read timeouts or two separate values.
+                Default is 5 seconds for connect and read timeouts.
+
+        """
+
         self.agent = agent
         self.expires_at: datetime.datetime
         self.key = key
