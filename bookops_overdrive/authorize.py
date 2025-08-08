@@ -30,7 +30,10 @@ class OverdriveAccessToken:
         agent:
             `User-agent` parameter to be passed in request header.
             Default is 'bookops-overdrive/{version}'
-
+        timeout:
+            How many seconds to wait for the server to respond. Accepts a single value
+            to be applied to both connect and read timeouts or two separate values.
+            Default is 5 seconds for connect and read timeouts.
     """
 
     def __init__(
@@ -38,6 +41,7 @@ class OverdriveAccessToken:
         key: str,
         secret: str,
         agent: str = f"{__title__}/{__version__}",
+        timeout: int | float | tuple[int | float, int | float] | None = (5, 5),
     ) -> None:
         self.agent = agent
         self.expires_at: datetime.datetime | None = None
@@ -45,6 +49,7 @@ class OverdriveAccessToken:
         self.oauth_url = "https://oauth.overdrive.com/token"
         self.secret = secret
         self.server_response: requests.Response | None = None
+        self.timeout = timeout
         self.token_str: str | None = None
 
         self._request_token()
@@ -79,7 +84,11 @@ class OverdriveAccessToken:
         data = {"grant_type": "client_credentials"}
         try:
             response = requests.post(
-                self.oauth_url, auth=auth, headers=headers, data=data
+                self.oauth_url,
+                auth=auth,
+                headers=headers,
+                data=data,
+                timeout=self.timeout,
             )
             response.raise_for_status()
         except (requests.Timeout, requests.ConnectionError):
