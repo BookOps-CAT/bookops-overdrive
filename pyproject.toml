@@ -34,3 +34,11 @@ addopts = '-m "not livetest" --cov=bookops_overdrive/'
 relative_files = true
 source = ["."]
 omit = ["tests/*"]
+
+[tool.mypy]
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
