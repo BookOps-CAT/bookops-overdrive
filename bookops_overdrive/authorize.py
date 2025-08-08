@@ -44,7 +44,7 @@ class OverdriveAccessToken:
         timeout: int | float | tuple[int | float, int | float] | None = (5, 5),
     ) -> None:
         self.agent = agent
-        self.expires_at: datetime.datetime | None = None
+        self.expires_at: datetime.datetime
         self.key = key
         self.oauth_url = "https://oauth.overdrive.com/token"
         self.secret = secret
@@ -109,7 +109,7 @@ class OverdriveAccessToken:
     def is_expired(self) -> bool:
         """Checks if the access token has expired."""
         now = datetime.datetime.now(datetime.timezone.utc)
-        if self.expires_at and self.expires_at < now:
+        if self.expires_at < now:
             return True
         else:
             return False
