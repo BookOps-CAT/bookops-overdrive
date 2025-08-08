@@ -38,14 +38,14 @@ class TestOverdriveAccessTokenLive:
             key=os.environ["CLIENT_KEY"],
             secret=os.environ["CLIENT_SECRET"],
         )
+        json_response = token.server_response.json()
         assert token.server_response.status_code == 200
-        assert token.token_str is not None
+        assert token.agent == "bookops-overdrive/0.0.1"
         assert token.expires_at > datetime.datetime.now(datetime.timezone.utc)
-        assert (
-            token.server_response.json()["scope"]
-            == "LIB META AVAIL SRCH ENABLEODAPPDOWNLOADS"
-        )
-        assert sorted(list(token.server_response.json().keys())) == [
+        assert isinstance(token.token_str, str)
+        assert token.token_str is not None
+        assert json_response["scope"] == "LIB META AVAIL SRCH ENABLEODAPPDOWNLOADS"
+        assert sorted(list(json_response.keys())) == [
             "access_token",
             "expires_in",
             "scope",

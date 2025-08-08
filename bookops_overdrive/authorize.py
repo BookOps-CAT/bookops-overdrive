@@ -13,15 +13,20 @@ from .errors import BookopsOverdriveError
 
 class OverdriveAccessToken:
     """
-    Requests an access token from Overdrive OAuth2 server.
+    The `OverdriveAccessToken` class authenticates user credentials for the Overdrive
+    APIs using OAuth2.0 and the Client Credentials Grant method. The class sends a POST
+    request the the Overdrive OAuth server and, if successful, returns an access token
+    which can be used to query Overdrive APIs.
+
+    The authentication process requires an API key and secret which can be requested
+    from Overdrive (more information on requesting credentials is available here:
+    https://developer.overdrive.com/getting-started/application-process).
 
     Args:
         key:
-            API key as a string
+            API clientKey as a string
         secret:
-            API secret as a string
-        oauth_url:
-            url for OAuth2 server as a string
+            API clientSecret as a string
         agent:
             `User-agent` parameter to be passed in request header.
             Default is 'bookops-overdrive/{version}'
@@ -68,7 +73,7 @@ class OverdriveAccessToken:
         self.expires_at = self._calculate_expiration_time(json_resp["expires_in"])
 
     def _post_token_request(self) -> requests.Response:
-        """Sends a POST request for an access token"""
+        """Sends a POST request for an access token."""
         auth = (self.key, self.secret)
         headers = {"User-Agent": self.agent, "Accept": "application/json"}
         data = {"grant_type": "client_credentials"}
@@ -87,7 +92,7 @@ class OverdriveAccessToken:
             return response
 
     def _request_token(self):
-        """Requests access token and parses response."""
+        """Requests an access token and parses response from server."""
         response = self._post_token_request()
         self._parse_server_response(response)
 
