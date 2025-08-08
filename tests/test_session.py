@@ -43,8 +43,8 @@ class TestOverdriveSession:
             stub_session.get_library_account_info(library_id="1")
         assert "404 Client Error: Not Found for url: " in str(exc.value)
 
-    def test_get_inventory(self, stub_session):
-        response = stub_session.get_inventory(collectionToken="foo")
+    def test_get_collection_inventory(self, stub_session):
+        response = stub_session.get_collection_inventory(collectionToken="foo")
         assert response.status_code == 200
         assert response.reason == "OK"
 
@@ -54,12 +54,14 @@ class TestOverdriveSession:
         assert response.status_code == 200
         assert response.reason == "OK"
 
-    def test_get_metadata(self, stub_session):
-        response = stub_session.get_metadata(collectionToken="foo", reserveId="123")
+    def test_get_title_metadata(self, stub_session):
+        response = stub_session.get_title_metadata(
+            collectionToken="foo", reserveId="123"
+        )
         assert response.status_code == 200
         assert response.reason == "OK"
 
-    def test_search_collection(self, stub_session):
-        response = stub_session.search_collection(collectionToken="foo", q="bar")
+    def test_search_title_metadata(self, stub_session):
+        response = stub_session.search_title_metadata(collectionToken="foo", q="bar")
         assert response.status_code == 200
         assert response.reason == "OK"

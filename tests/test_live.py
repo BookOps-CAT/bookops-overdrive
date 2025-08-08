@@ -29,13 +29,14 @@ class TestLiveOverdriveSession:
                 "name",
                 "type",
             ]
-            assert response.json() == {}
 
-    def test_get_inventory(self, live_token):
+    def test_get_collection_inventory(self, live_token):
         with OverdriveSession(authorization=live_token) as session:
             token_response = session.get_library_account_info(os.environ["LIBRARY_ID"])
             collectionToken = token_response.json()["collectionToken"]
-            inventory_response = session.get_inventory(collectionToken=collectionToken)
+            inventory_response = session.get_collection_inventory(
+                collectionToken=collectionToken
+            )
             assert sorted(list(inventory_response.json().keys())) == [
                 "files",
                 "links",

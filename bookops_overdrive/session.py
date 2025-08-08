@@ -11,8 +11,12 @@ from .query import Query
 
 class OverdriveSession(requests.Session):
     """
-    The `OverdriveSession` class supports interactions with the Overdrive Discovery
-    APIs. Inherits all `requests.Session` methods.
+    The `OverdriveSession` class supports interactions with the Overdrive
+    Discovery APIs. Inherits all `requests.Session` methods.
+
+    This class includes methods that support endpoints within four of the
+    Overdrive Discovery APIs: Library Account, Search, Metadata, and Digital
+    Inventory.
 
     """
 
@@ -47,6 +51,7 @@ class OverdriveSession(requests.Session):
         self.headers.update({"Authorization": f"Bearer {self.authorization.token_str}"})
 
     def _request_new_access_token(self) -> None:
+        """Requests a new token and updates headers."""
         self.authorization._request_token()
         self.headers.update({"Authorization": f"Bearer {self.authorization.token_str}"})
 
@@ -72,6 +77,18 @@ class OverdriveSession(requests.Session):
             return ",".join([str(i.strip()) for i in reserveIds.split(",")])
 
     def get_library_account_info(self, library_id: int) -> requests.Response:
+        """
+        Given an Overdrive ID, retrieve information for the specified library.
+
+        Uses `/libraries/{libraryID}` endpoint.
+
+        Args:
+            library_id:
+                the Overdrive Library ID for an institution.
+
+        Returns:
+            `requests.Response` instance
+        """
         url = self._url_library_account(library_id)
         header = {"Accept": "application/json"}
         req = requests.Request("GET", url=url, headers=header)
@@ -79,7 +96,22 @@ class OverdriveSession(requests.Session):
         query = Query(self, prepared_request=prepared_request)
         return query.response
 
-    def get_inventory(self, collectionToken: str) -> requests.Response:
+    def get_collection_inventory(self, collectionToken: str) -> requests.Response:
+        """
+        Given an institution's `collectionToken`, retrieve an inventory of the
+        library's entire digital collection. An institution's `collectionToken`
+        can be retrieved using the `/libraries/{libraryID}` endpoint (or the
+        `get_library_account_info` method of this class).
+
+        Uses `/collections/{collectionToken}/digitalinventory` endpoint.
+
+        Args:
+            collectionToken:
+                a token which identifies the the requesting institution.
+
+        Returns:
+            `requests.Response` instance
+        """
         url = self._url_collections_digital_inventory(collectionToken)
         header = {"Accept": "application/json"}
         req = requests.Request("GET", url=url, headers=header)
@@ -90,6 +122,22 @@ class OverdriveSession(requests.Session):
     def get_bulk_metadata(
         self, collectionToken: str, reserveIds: str | list[str]
     ) -> requests.Response:
+        """
+        Retrieve metadata for up to 50 titles by `reserveId` or `crossRefId`.
+
+        Uses `/collections/{collectionToken}/bulkmetadata` endpoint.
+
+        Args:
+            collectionToken:
+                a token which identifies the the requesting institution.
+            reserveIds:
+                string or list containing one or more reserveIds or crossRefIds.
+                If str, the ids must be separated by a comma.
+
+        Returns:
+            `requests.Response` instance
+
+        """
         url = self._url_collections_bulk_metadata(collectionToken)
         header = {"Accept": "application/json"}
         payload = {"reserveIds": self._verify_reserve_ids(reserveIds=reserveIds)}
@@ -98,7 +146,24 @@ class OverdriveSession(requests.Session):
         query = Query(self, prepared_request=prepared_request)
         return query.response
 
-    def get_metadata(self, collectionToken: str, reserveId: str) -> requests.Response:
+    def get_title_metadata(
+        self, collectionToken: str, reserveId: str
+    ) -> requests.Response:
+        """
+        Retrieve metadata for a single title by `reserveId` or `crossRefId`.
+
+        Uses `/collections/{collectionToken}/products/{reserveId}/metadata` endpoint.
+
+        Args:
+            collectionToken:
+                a token which identifies the the requesting institution.
+            reserveId:
+                the reserveId or crossRefId for the title
+
+        Returns:
+            `requests.Response` instance
+
+        """
         url = self._url_collections_metadata(collectionToken, reserveId=reserveId)
         header = {"Accept": "application/json"}
         req = requests.Request("GET", url=url, headers=header)
@@ -106,23 +171,76 @@ class OverdriveSession(requests.Session):
         query = Query(self, prepared_request=prepared_request)
         return query.response
 
-    def search_collection(
+    def search_title_metadata(
         self,
         collectionToken: str,
         q: str,
-        availability: bool | None = None,
+        availability: bool = True,
         formats: str | list[str] | None = None,
         identifier: str | None = None,
         crossRefId: str | None = None,
         daysSinceAdded: str | None = None,
         lastTitleUpdateTime: str | None = None,
         lastUpdateTime: str | None = None,
-        limit: str | None = None,
-        minimum: str | None = None,
+        limit: str | int = 25,
+        minimum: bool = False,
         offset: str | None = None,
         series: str | None = None,
         sort: str | None = None,
     ) -> requests.Response:
+        """
+        Search for titles within an institution's digital collection using
+        query parameters.
+
+        Uses `/collections/{collectionToken}/products` endpoint.
+
+        Args:
+            collectionToken:
+                A token which identifies the the requesting institution.
+            q:
+                Terms to include in search query. Terms will search on title,
+                author, and/or keyword. Exact phrases can be included in quotes.
+            availability:
+                Whether or not titles are currently available to borrow. Default
+                is `True`.
+            formats:
+                String or list containing formats to be included in search. If str,
+                the formats must be separated by a comma.
+            identifier:
+                Unique identifiers such as ISBN and ASIN to search by. While a
+                title's print ISBN may be included in a search response under
+                'otherFormatIdentifiers', print ISBNs cannot be used within search.
+            crossRefId:
+                A title's crossRefId (also known as titleId).
+            daysSinceAdded:
+                Search for titles that were added to the collection within a certain
+                number of days. Maximum is 90.
+            lastTitleUpdateTime:
+                Search for titles updated after this date. Date should be formatted
+                as YYYY-MM-DD.
+            lastUpdateTime:
+                Search for records updated after this date. Date should be formatted
+                as YYYY-MM-DD.
+            limit:
+                The maximum number of records to be displayed per page.
+                Default is 25 and maxiumum is 2000.
+            minimum:
+                When true, only the title's reserveId will be included in the search
+                results. Default is False.
+            offset:
+                Start position of records to return.
+            series:
+                Search by series name.
+            sort:
+                Sort results based on author, availability, dateAdded, gradeLevel,
+                imprint, popularity, popularitySite, publisher, relevancy, saleDate,
+                or title. Include either ':asc' or ':dsc' to sort the results in
+                either ascending or descending order.
+
+        Returns:
+            `requests.Response` instance
+
+        """
         url = self._url_collections_search(collectionToken)
         header = {"Accept": "application/json"}
         payload = {
