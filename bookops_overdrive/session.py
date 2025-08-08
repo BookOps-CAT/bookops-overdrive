@@ -20,6 +20,10 @@ class OverdriveSession(requests.Session):
         agent:
             `User-agent` parameter to be passed in request header.
             Default is 'bookops-overdrive/{version}'
+        timeout:
+            How many seconds to wait for the server to respond. Accepts a single value
+            to be applied to both connect and read timeouts or two separate values.
+            Default is 5 seconds for connect and read timeouts.
 
     """
 
@@ -29,9 +33,11 @@ class OverdriveSession(requests.Session):
         self,
         authorization: OverdriveAccessToken,
         agent: str = f"{__title__}/{__version__}",
+        timeout: int | float | tuple[int | float, int | float] | None = (5, 5),
     ) -> None:
         super().__init__()
         self.authorization = authorization
+        self.timeout = timeout
 
         self.headers.update({"User-Agent": agent})
         self.headers.update({"Authorization": f"Bearer {self.authorization.token_str}"})
