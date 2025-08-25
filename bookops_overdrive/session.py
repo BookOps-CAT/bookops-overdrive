@@ -37,9 +37,9 @@ class OverdriveSession(requests.Session):
                 `User-agent` parameter to be passed in request header.
                 Default is 'bookops-overdrive/{version}'.
             timeout:
-                How many seconds to wait for the server to respond. Accepts a single value
-                to be applied to both connect and read timeouts or two separate values.
-                Default is 5 seconds for connect and read timeouts.
+                How many seconds to wait for the server to respond. Accepts a single
+                value to be applied to both connect and read timeouts or two separate
+                values. Default is 5 seconds for connect and read timeouts.
 
         """
 

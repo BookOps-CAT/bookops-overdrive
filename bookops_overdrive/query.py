@@ -36,9 +36,9 @@ class Query:
                 The request that will be sent to the web service as a
                 `requests.PreparedRequest` object.
             timeout:
-                How many seconds to wait for the server to respond. Accepts a single value
-                to be applied to both connect and read timeouts or two separate values.
-                Default is 5 seconds for connect and read timeouts.
+                How many seconds to wait for the server to respond. Accepts a single
+                value to be applied to both connect and read timeouts or two separate
+                values. Default is 5 seconds for connect and read timeouts.
 
         Raises:
             BookopsOverdriveError: If the request encounters any errors.
