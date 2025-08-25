@@ -20,7 +20,8 @@ class OverdriveSession(requests.Session):
 
     """
 
-    BASE_URL = "https://api.overdrive.com/v1"
+    COLLECTIONS_URL = "https://api.overdrive.com/v1/collections"
+    LIBRARY_ACCOUNT_URL = "https://api.overdrive.com/v1/libraries"
 
     def __init__(
         self,
@@ -56,19 +57,19 @@ class OverdriveSession(requests.Session):
         self.headers.update({"Authorization": f"Bearer {self.authorization.token_str}"})
 
     def _url_collections_digital_inventory(self, collectionToken: str) -> str:
-        return f"{self.BASE_URL}/collections/{collectionToken}/digitalinventory"
+        return f"{self.COLLECTIONS_URL}/{collectionToken}/digitalinventory"
 
     def _url_collections_bulk_metadata(self, collectionToken: str) -> str:
-        return f"{self.BASE_URL}/collections/{collectionToken}/bulkmetadata"
+        return f"{self.COLLECTIONS_URL}/{collectionToken}/bulkmetadata"
 
     def _url_collections_metadata(self, collectionToken: str, reserveId: str) -> str:
-        return f"{self.BASE_URL}/collections/{collectionToken}/products/{reserveId}/metadata"
+        return f"{self.COLLECTIONS_URL}/{collectionToken}/products/{reserveId}/metadata"
 
     def _url_collections_search(self, collectionToken: str) -> str:
-        return f"{self.BASE_URL}/collections/{collectionToken}/products"
+        return f"{self.COLLECTIONS_URL}/{collectionToken}/products"
 
     def _url_library_account(self, library_id: int) -> str:
-        return f"{self.BASE_URL}/libraries/{library_id}"
+        return f"{self.LIBRARY_ACCOUNT_URL}/{library_id}"
 
     def _verify_reserve_ids(self, reserveIds: str | list[str]) -> str:
         if isinstance(reserveIds, list):

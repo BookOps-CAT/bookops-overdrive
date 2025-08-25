@@ -9,7 +9,10 @@ class TestOverdriveSession:
     def test_session(self, mock_token):
         with OverdriveSession(authorization=mock_token) as session:
             assert session.headers["Authorization"] == "Bearer foo"
-            assert session.BASE_URL == "https://api.overdrive.com/v1"
+            assert session.COLLECTIONS_URL == "https://api.overdrive.com/v1/collections"
+            assert (
+                session.LIBRARY_ACCOUNT_URL == "https://api.overdrive.com/v1/libraries"
+            )
             assert session.headers["User-Agent"] == "bookops-overdrive/0.0.1"
 
     def test_session_refresh_token(self, mock_expired_token):
