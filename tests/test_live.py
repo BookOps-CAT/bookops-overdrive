@@ -16,9 +16,11 @@ def live_token(live_creds):
 
 @pytest.mark.livetest
 class TestLiveOverdriveSession:
-    def test_get_library_account_info(self, live_token):
+    @pytest.mark.parametrize("library", ["NYPL", "BPL"])
+    def test_get_library_account_info(self, live_token, library):
+        library_id = os.environ[f"{library}_LIBRARY_ID"]
         with OverdriveSession(authorization=live_token) as session:
-            response = session.get_library_account_info(os.environ["LIBRARY_ID"])
+            response = session.get_library_account_info(library_id)
             assert response.status_code == 200
             assert sorted(list(response.json().keys())) == [
                 "collectionToken",
@@ -30,9 +32,11 @@ class TestLiveOverdriveSession:
                 "type",
             ]
 
-    def test_get_collection_inventory(self, live_token):
+    @pytest.mark.parametrize("library", ["NYPL", "BPL"])
+    def test_get_collection_inventory(self, live_token, library):
+        library_id = os.environ[f"{library}_LIBRARY_ID"]
         with OverdriveSession(authorization=live_token) as session:
-            token_response = session.get_library_account_info(os.environ["LIBRARY_ID"])
+            token_response = session.get_library_account_info(library_id)
             collectionToken = token_response.json()["collectionToken"]
             inventory_response = session.get_collection_inventory(
                 collectionToken=collectionToken

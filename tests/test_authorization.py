@@ -44,7 +44,7 @@ class TestOverdriveAccessTokenLive:
         assert token.expires_at > datetime.datetime.now(datetime.timezone.utc)
         assert isinstance(token.token_str, str)
         assert token.token_str is not None
-        assert json_response["scope"] == "LIB META AVAIL SRCH ENABLEODAPPDOWNLOADS"
+        assert json_response["scope"] == "LIB META AVAIL SRCH"
         assert sorted(list(json_response.keys())) == [
             "access_token",
             "expires_in",
