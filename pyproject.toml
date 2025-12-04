@@ -3,7 +3,7 @@ name = "bookops-overdrive"
 version = "0.0.1"
 description = "Overdrive Developer API wrapper"
 authors = [
-    {name = "Charlotte Kostelic",email = "charlottekostelic@gmail.com"}
+    {name = "Charlotte Kostelic",email = "charlottekostelic@bookops.org"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
