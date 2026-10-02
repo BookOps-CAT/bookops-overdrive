@@ -9,8 +9,7 @@ from bookops_overdrive.session import OverdriveSession
 @pytest.fixture
 def live_token(live_creds):
     return OverdriveAccessToken(
-        key=os.environ["CLIENT_KEY"],
-        secret=os.environ["CLIENT_SECRET"],
+        key=os.environ["CLIENT_KEY"], secret=os.environ["CLIENT_SECRET"]
     )
 
 

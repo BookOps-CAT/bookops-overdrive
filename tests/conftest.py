@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import datetime
-import json
 import os
 
 import pytest
+import yaml
 from requests import Response
 from requests.exceptions import ConnectionError
 
@@ -13,13 +13,9 @@ from bookops_overdrive import OverdriveAccessToken, OverdriveSession
 
 @pytest.fixture(scope="module")
 def live_creds() -> None:
-    with open(
-        os.path.join(
-            os.environ["USERPROFILE"], ".cred/.overdrive/overdrive_creds.json"
-        ),
-        "r",
-    ) as fh:
-        creds = json.load(fh)
+    cred_path = ".cred/.overdrive/nyp_overdrive_api.yaml"
+    with open(os.path.join(os.environ["USERPROFILE"], cred_path), "r") as fh:
+        creds = yaml.safe_load(fh)
         for k, v in creds.items():
             os.environ[k] = v
 
