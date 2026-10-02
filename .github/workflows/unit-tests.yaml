@@ -6,25 +6,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.12", "3.13", "3.14"]  
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version}}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - name: Install uv and set python version
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ matrix.python-version}}
-      - name: Install Poetry with pipx
-        run: pipx install poetry
-      - name: Install dependencies with poetry
-        run: poetry install --no-root
+          python-version: ${{ matrix.python-version }}
       - name: Run tests
-        run: poetry run pytest -m "not livetest" --cov=bookops_overdrive/ --cov-report=xml
+        run: uv run --frozen pytest -m "not livetest" --cov=bookops_overdrive/
       - name: Send report to Coveralls
         uses: coverallsapp/github-action@v2
         with:
           parallel: true
           github-token: ${{ secrets.GITHUB_TOKEN}}
           flag-name: ${{ matrix.python-version}}
+          fail-on-error: false
 
   finish:
     needs: run-tests
@@ -34,3 +31,4 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
+          fail-on-error: false          
